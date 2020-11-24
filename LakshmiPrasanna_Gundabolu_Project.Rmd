@@ -1,0 +1,496 @@
+---
+title: "Analytics Project"
+---
+
+
+**Your Name**: Lakshmi Prasanna Gundabolu
+**Your G Number**: G01223268
+
+
+
+```{r warning = FALSE, message = FALSE}
+# Suppress dplyr summarise grouping warning messages
+options(dplyr.summarise.inform = FALSE)
+
+## Add R libraries here
+library(tidyverse)
+library(tidymodels)
+
+
+# Load data
+loans_df <- read_rds(url('https://gmubusinessanalytics.netlify.app/data/loan_data.rds'))
+
+```
+
+
+
+# Data Analysis [50 Points]
+
+In this section, you must think of at least 5 relevant questions that explore the relationship between `loan_default` and the other variables in the `loan_df` data set. The goal of your analysis should be discovering which variables drive the differences between customers who do and do not default on their loans.
+
+You must answer each question and provide supporting data summaries with either a summary data frame (using `dplyr`/`tidyr`) or a plot (using `ggplot`) or both.
+
+In total, you must have a minimum of 3 plots (created with `ggplot`) and 3 summary data frames (created with `dplyr`) for the exploratory data analysis section. Among the plots you produce, you must have at least 3 different types (ex. box plot, bar chart, histogram, scatter plot, etc...)
+
+See the example question below.
+
+
+**Note**: To add an R code chunk to any section of your project, you can use the keyboard shortcut `Ctrl` + `Alt` + `i` or the `insert` button at the top of your R project template notebook file.
+
+
+## Sample Question
+
+**Are there differences in loan default rates by loan purpose?**
+
+**Answer**: Yes, the data indicates that credit card and medical loans have significantly larger default rates than any other type of loan. In fact, both of these loan types have default rates at more than 50%. This is nearly two times the average default rate for all other loan types.
+
+
+### Summary Table
+
+```{r echo = TRUE, fig.height=5, fig.width=9}
+loans_df %>%
+  group_by(loan_purpose) %>% 
+  summarise(n_customers = n(),
+            customers_default = sum(loan_default == 'yes'),
+            default_percent = 100 * mean(loan_default == 'yes'))
+```
+
+
+### Data Visulatization
+
+```{r echo = TRUE, fig.height=5, fig.width=9}
+default_rates <- loans_df %>%
+                 group_by(loan_purpose) %>% 
+                 summarise(n_customers = n(),
+                 customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+
+ggplot(data = default_rates, mapping = aes(x = loan_purpose, y = default_percent)) +
+    geom_bar(stat = 'identity', fill = '#006EA1', color = 'white') +
+    labs(title = 'Loan Default Rate by Purpose of Loan',
+         x = 'Loan Purpose',
+         y = 'Default Percentage') +
+    theme_light()
+```
+
+
+
+
+
+# Question 1
+
+
+**Question**:
+
+
+**Answer**:
+
+
+```{r}
+status_of_customer_home<-loans_df%>%
+  group_by(homeownership)%>%
+  summarise(n_customers=n(),
+             customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+ggplot(data = status_of_customer_home, mapping = aes(x = homeownership, y = default_percent)) +
+    geom_bar(stat = 'identity', fill = '#006EA1', color = 'white') +
+    labs(title = 'Loan Default Rate by Purpose of Loan',
+         x = 'Loan Purpose',
+         y = 'Default Percentage') +
+    theme_light()
+
+```
+
+
+
+# Question 2
+
+
+**Question**:
+
+
+**Answer**:
+
+
+```{r}
+credit_hist<-loans_df%>%
+  group_by(years_credit_history<=15,history_bankruptcy)%>%
+  summarise(n_customers=n(),
+             customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+interest<-loans_df%>%
+  group_by(interest_rate>=13)%>%
+  summarise(n_customers=n(),
+             customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+```
+
+
+# Question 3
+
+
+**Question**:
+
+
+**Answer**:
+
+
+```{r}
+app_type <-loans_df%>%
+  group_by(application_type)%>%
+  summarise(n_customers=n(),
+             customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+ggplot(data = loans_df, mapping = aes(x = application_type, y=loan_amount)) +
+  geom_boxplot(fill = "#006EA1") +
+  labs(title = "Boxplot of hwy by class", x = "Class of Vehicle",
+       y = "Miles per Gallon Highway (hwy)")
+
+purpose_income <- loans_df%>%
+  group_by(loan_purpose,annual_income<=70000)%>%
+  summarise(n_customers=n(),
+             customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+
+```
+
+
+
+# Question 4
+
+
+**Question**:
+
+
+**Answer**:
+
+
+```{r}
+ggplot(data=loans_df,mapping=aes(x=loan_amount,y=installment))+geom_point()
+ggplot(data = loans_df, mapping = aes(x = loan_amount)) +
+       geom_histogram(fill = "#006EA1", color = "white",bins=4) + 
+       labs(title = "Distribution of Resting Blood Pressure",
+            x = "Resting Blood Pressure",
+            y = "Number of Patients")
+
+
+```
+
+
+
+# Question 5
+
+
+**Question**:
+
+
+**Answer**:
+
+
+```{r}
+amount_term <-loans_df%>%
+  group_by(loan_amount<=20000,term)%>%
+  summarise(n_customers=n(),
+             customers_default = sum(loan_default == 'yes'),
+                 default_percent = 100 * mean(loan_default == 'yes'))
+
+ggplot(data = loans_df, aes(x = term, fill=loan_amount<=20000)) +
+    geom_bar(position="dodge",stat = "count") +
+    labs(title = "Fasting Blood Sugar Level by Heart Disease Status",
+         x = "Fasting Blood Sugar", y = "Number of Patients")
+
+
+```
+
+
+
+# Predictive Modeling [75 Points]
+
+
+In this section of the project, you will fit **two classification algorithms** to predict the response variable,`loan_default`. You should use all of the other variables in the `loans_df` data as predictor variables for each model.
+
+You must follow the machine learning steps below. 
+
+The data splitting and feature engineering steps should only be done once so that your models are using the same data and feature engineering steps for training.
+
+- Split the `loans_df` data into a training and test set (remember to set your seed)
+- Specify a feature engineering pipeline with the `recipes` package
+    - You can include steps such as skewness transformation, dummy variable encoding or any other steps you find appropriate
+- Specify a `parsnip` model object
+    - You may choose from the following classification algorithms:
+      - Logistic Regression
+      - LDA
+      - QDA
+      - KNN
+      - Decision Tree
+      - Random Forest
+- Package your recipe and model into a workflow
+- Fit your workflow to the training data
+    - If your model has hyperparameters:
+      - Split the training data into 5 folds for 5-fold cross validation using `vfold_cv` (remember to set your seed)
+      - Perform hyperparamter tuning with grid search using the `grid_regular()` function 
+      - Hyperparameter tuning can take a significant amount of computing time. To minimize this, use a maximum of 3 levels within your `grid_regular()` function
+      - Select the best model with `select_best()` and finalize your workflow
+- Evaluate model performance on the test set by plotting an ROC curve using `autoplot()` and calculating the area under the ROC curve on your test data
+
+
+```{r}
+#Data  splitting 
+set.seed(271)
+library(rsample)
+
+# Create a split object
+loans_split <- initial_split(loans_df, prop = 0.75, 
+                                   strata = loan_default)
+
+# Build training data set
+loans_training <- loans_split %>% 
+                        training()
+
+# Build testing data set
+loans_test <- loans_split %>% 
+                    testing()
+
+# Create cross validation folds for hyperparameter tuning
+set.seed(271)
+
+loans_folds <- vfold_cv(loans_training, v = 5)
+
+
+```
+
+```{r}
+#Feature Engineering
+library(recipes)
+
+loans_recipe <- recipe(loan_default ~ ., data=loans_training)
+
+summary(loans_recipe)
+
+loans_transformations <- recipe(loan_default ~ .,
+                                   data = loans_training) %>% 
+                            # Transformation steps
+                            step_YeoJohnson(all_numeric(), -all_outcomes()) %>%
+                            step_normalize(all_numeric(), -all_outcomes()) %>% 
+                            step_dummy(all_nominal(), -all_outcomes()) %>% 
+                            # Train transformations on loans_training
+                            prep()
+
+# Apply to loans_training
+loans_transformations %>% 
+  bake(new_data = loans_training)
+```
+
+
+# Model 1
+
+```{r}
+
+logistic_model <- logistic_reg() %>% 
+                  set_engine('glm') %>% 
+                  set_mode('classification')
+
+```
+
+
+## Create a Workflow
+
+Next, combine your model and recipe into a single workflow, `logistic_wf`
+
+
+```{r}
+
+logistic_wf <- workflow() %>% 
+               add_model(logistic_model)%>% 
+               add_recipe(loans_recipe)
+```
+
+
+## Fit Model
+
+Fit your workflow using the `last_fit()` function. This will train you model on the training data and calculate predictions on the test data.
+
+
+```{r}
+logistic_fit <-  logistic_wf %>% 
+                 last_fit(split=loans_split)
+```
+
+
+## Collect Predictions
+
+Use the `collect_predictions()` function to create a data frame of test results.
+
+
+```{r}
+logistic_results <-  logistic_fit %>% 
+                     collect_predictions()
+```
+
+
+## ROC Curve
+
+Calculate the ROC Curve, area under the ROC curve, and the confusion matrix on the test data. You should get the results below.
+
+
+```{r}
+
+## ROC Curve
+roc_curve( logistic_results , truth = loan_default , estimate = .pred_yes ) %>% 
+  autoplot()
+
+# ROC AUC
+roc_auc(logistic_results, truth = loan_default, .pred_yes)
+
+# Confusion Matrix
+conf_mat(logistic_results, truth = loan_default, estimate = .pred_class)
+
+```
+
+
+
+
+# Model 2
+
+```{r}
+## Specify KNN model
+
+knn_model <- nearest_neighbor(neighbors = tune()) %>% 
+             set_engine('kknn') %>% 
+             set_mode('classification')
+```
+
+
+
+## Create KNN Workflow
+
+
+```{r}
+
+knn_wf <- workflow() %>% 
+          add_model(knn_model) %>% 
+          add_recipe(loans_recipe)
+
+```
+
+## Tune Hyperparameter
+
+### Create Tuning Grid
+
+Next, create a grid of the following values of `neighbors`: 10, 15, 25, 45, 60, 80, 100, 120, 140, and 180
+
+
+```{r}
+
+## Create a grid of hyperparameter values to test
+k_grid <- tibble(neighbors = c(10, 15, 25, 45, 60, 80, 100, 120, 140, 180))
+
+```
+
+
+### Grid Search 
+
+Next, use `tune_grid()` to perform hyperparameter tuning using `k_grid` and `mobile_folds`.
+
+
+```{r}
+
+set.seed(314)
+install.packages("kknn")
+library(kknn)
+knn_tuning <- knn_wf %>% 
+              tune_grid(resamples = loans_folds ,
+                        grid = k_grid)
+```
+
+### Select Best Model
+
+Use the `select_best()` function to select the best model from our tuning results based on the area under the ROC curve. 
+
+
+```{r}
+
+best_k <- knn_tuning %>% 
+          select_best(metric = 'roc_auc')
+
+```
+
+
+### Finalize Workflow
+
+The last step is to use `finalize_workflow()` to add our optimal model to our workflow object.
+
+
+```{r}
+
+final_knn_wf <- knn_wf %>% 
+                finalize_workflow(best_k)
+```
+
+
+## Fit Model
+
+```{r}
+knn_fit <- final_knn_wf %>% 
+           last_fit(split = loans_split)
+```
+
+
+## Collect Predictions
+
+Use the `collect_predictions()` function to create a data frame of test results.
+
+
+```{r}
+knn_results <-   knn_fit %>% 
+                 collect_predictions()
+```
+
+
+## ROC Curve and Confusion Matrix
+
+Calculate the ROC Curve, area under the ROC curve, and the confusion matrix on the test data. You should get the results below.
+
+
+```{r}
+
+## ROC Curve
+roc_curve( knn_results , truth = loan_default , estimate = .pred_yes ) %>% 
+  autoplot()
+
+# ROC AUC
+roc_auc(knn_results, truth = loan_default, .pred_yes)
+
+
+# Confusion Matrix
+conf_mat(knn_results, truth = loan_default, estimate = .pred_class)
+
+```
+
+
+# Summary of Results [25 Points]
+
+Write a summary of your overall findings and recommendations to the executives at the bank. Think of this section as your closing remarks of a presentation, where you summarize your key findings, model performance, and make recommendations to improve loan processes at the bank. 
+
+Your summary should include:
+
+- Key findings from your data analysis. What were the things that stuck out for you in this section and why are they important?
+- Your “best” classification model and an analysis of its performance. 
+  - In this section you should talk about the expected error of your model on future data. 
+  - You should discuss at least one performance metric, such as an F1 or ROC AUC for your model. However, you must explain the results in an intuitive, non-technical manner. Your audience in this case are executives at a bank with limited knowledge of machine learning.
+- Your recommendations to the bank – how can financial losses from default be reduced?
+
+
+
+
+**Summary**
+
+Add your summary here. Please do not place your text within R code chunks.
+
+
